@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo:/data/db
+    healthcheck:
+      test: test $$(echo "rs.initiate({_id:\"rs0\",members:[{_id:0,host:\"localhost:27017\"}]}).ok || rs.status().ok" | mongo --quiet) -eq 1
+      interval: 10s
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: on-failure
+
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+
+volumes:
+  mongo:
+    driver: local
+  typesense:
+    driver: local
