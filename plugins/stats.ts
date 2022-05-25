@@ -61,11 +61,11 @@ const performanceMonitorPlugin: FastifyPluginAsync = async function (instance) {
     next();
   });
 
-  const stats: RetrieveStats = function () {
+  const retrieveStats: RetrieveStats = function () {
     return observedEntries;
   };
 
-  instance.decorate("stats", stats);
+  instance.decorate("stats", retrieveStats);
 };
 
 export default fp(performanceMonitorPlugin, {

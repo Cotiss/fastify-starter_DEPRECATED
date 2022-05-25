@@ -19,7 +19,7 @@ declare module "fastify" {
     ListingsService: import("../services/listings").ListingsService;
     AuthService: import("../domain/auth/auth.service").AuthService;
     UsersService: import("../domain/users/users.service").UsersService;
-    stats: import("../plugins/stats").RetrieveStats;
+    retrieveStats: import("../plugins/stats").RetrieveStats;
   }
 
   export interface FastifyRequest {
