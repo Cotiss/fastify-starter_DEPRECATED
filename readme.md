@@ -8,7 +8,7 @@ This repository contains a slightly opionated way to use Fastify. All the code i
 ## Getting started
 1. Clone the repository
    ```sh
-    git clone https://github.com/Cotiss/fastify-starter.git
+    git clone https://github.com/janickvwcotiss/fastify-starter.git
    ```
 3. Install the dependencies
    ```sh
