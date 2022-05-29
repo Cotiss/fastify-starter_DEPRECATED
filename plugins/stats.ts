@@ -12,27 +12,25 @@ const ONSEND = "on-send-";
 const ONREQUEST = "on-request-";
 const ROUTES = "fastify-routes:";
 
-export type RetrieveStats = () => void;
+export type RetrieveStats = () => ObservedEntries;
+
+type ObservedEntries = Record<string, Record<string, RecordableHistogram>>;
 
 const performanceMonitorPlugin: FastifyPluginAsync = async function (instance) {
-  let observedEntries: Record<string, Record<string, RecordableHistogram>> = {};
+  let observedEntries: ObservedEntries = {};
   const obs = new PerformanceObserver((items) => {
     items.getEntries().forEach((item) => {
       if (item.name.indexOf(ROUTES) === 0) {
         const method = item.name.split(":")[1].split("|")[0];
         const route = item.name.split(":")[1].split("|")[1];
         if (observedEntries[method] && observedEntries[method][route]) {
-          observedEntries[method][route].record(
-            Math.floor(item.duration * 1000000000)
-          );
+          observedEntries[method][route].record(Math.floor(item.duration));
         } else {
           if (!observedEntries[method]) {
             observedEntries[method] = {};
           }
           observedEntries[method][route] = createHistogram();
-          observedEntries[method][route].record(
-            Math.floor(item.duration * 1000000000)
-          );
+          observedEntries[method][route].record(Math.floor(item.duration));
         }
       }
     });
@@ -65,7 +63,7 @@ const performanceMonitorPlugin: FastifyPluginAsync = async function (instance) {
     return observedEntries;
   };
 
-  instance.decorate("stats", retrieveStats);
+  instance.decorate("retrieveStats", retrieveStats);
 };
 
 export default fp(performanceMonitorPlugin, {
